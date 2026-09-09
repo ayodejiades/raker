@@ -7,7 +7,7 @@ import { internalMutation, query } from "./_generated/server";
 // replying to a claim email). This is the "AgentMail does real work" path:
 // a reply lands here and the claim's status updates live for anyone watching
 // the dashboard, no polling.
-export const agentmail = new AgentMail(components.agentmail, {
+export const agentmail: AgentMail = new AgentMail(components.agentmail, {
   onMessageReceived: internal.email.onMessageReceived,
 });
 

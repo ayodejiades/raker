@@ -9,7 +9,14 @@ const http = httpRouter();
 http.route({
   path: "/agentmail/webhook",
   method: "POST",
-  handler: httpAction(async (ctx, req) => agentmail.handleWebhook(ctx, req)),
+  // Cast: the component's RunMutationCtx type predates this convex version's
+  // extra `runMutation` transactionLimits overload; ctx is structurally fine.
+  handler: httpAction(async (ctx, req) =>
+    agentmail.handleWebhook(
+      ctx as unknown as Parameters<typeof agentmail.handleWebhook>[0],
+      req,
+    ),
+  ),
 });
 
 // The Firecrawl component mounts its own /firecrawl/webhook route itself

@@ -1,17 +1,18 @@
 import { AgentMail } from "@agentmail/convex";
 import { components } from "./_generated/api";
-import { mutation, query } from "./_generated/server";
+import { action, query } from "./_generated/server";
 
 const agentmail = new AgentMail(components.agentmail);
 
 // This app sends and receives mail from one shared AgentMail inbox — the
 // "claims filer" agent. Call this once (e.g. from the dashboard) to create it;
-// later calls just return the cached one.
-export const provisionInbox = mutation({
+// createInbox caches it into the component's own `inboxes` table, so
+// `currentInbox` below picks it up without another remote call.
+export const provisionInbox = action({
   args: {},
   handler: async (ctx) => {
-    const existing = await agentmail.listCachedInboxes(ctx);
-    if (existing.length > 0) return existing[0];
+    const cached = await ctx.runQuery(components.agentmail.lib.listCachedInboxes, {});
+    if (cached.length > 0) return cached[0];
     return await agentmail.createInbox(ctx, {
       username: "raker-claims",
       displayName: "Raker",
@@ -22,7 +23,7 @@ export const provisionInbox = mutation({
 export const currentInbox = query({
   args: {},
   handler: async (ctx) => {
-    const inboxes = await agentmail.listCachedInboxes(ctx);
+    const inboxes = await ctx.runQuery(components.agentmail.lib.listCachedInboxes, {});
     return inboxes[0] ?? null;
   },
 });

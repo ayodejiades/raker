@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { useMutation, useQuery } from "convex/react";
+import { useAction, useMutation, useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
-import type { Id } from "../convex/_generated/dataModel";
+import type { Doc, Id } from "../convex/_generated/dataModel";
 
 export default function App() {
   const settlements = useQuery(api.settlements.list);
   const inbox = useQuery(api.inbox.currentInbox);
-  const provisionInbox = useMutation(api.inbox.provisionInbox);
+  const provisionInbox = useAction(api.inbox.provisionInbox);
   const fileClaim = useMutation(api.claims.fileClaim);
   const [userEmail, setUserEmail] = useState("");
 
@@ -28,7 +28,7 @@ export default function App() {
       />
 
       <ul style={{ listStyle: "none", padding: 0 }}>
-        {(settlements ?? []).map((s) => (
+        {(settlements ?? []).map((s: Doc<"settlements">) => (
           <SettlementRow
             key={s._id}
             settlement={s}
@@ -67,7 +67,7 @@ function SettlementRow({
       >
         File claim
       </button>
-      {(claims ?? []).map((c) => (
+      {(claims ?? []).map((c: Doc<"claims">) => (
         <div key={c._id} style={{ fontSize: 12, marginTop: 8 }}>
           status: <strong>{c.status}</strong>
         </div>

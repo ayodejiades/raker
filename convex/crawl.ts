@@ -1,6 +1,12 @@
 import { v } from "convex/values";
 import { FirecrawlClient } from "@firecrawl/firecrawl-convex";
-import { action, internalMutation, mutation, query } from "./_generated/server";
+import {
+  action,
+  internalMutation,
+  internalQuery,
+  mutation,
+  query,
+} from "./_generated/server";
 import { components, internal } from "./_generated/api";
 
 const firecrawl = new FirecrawlClient(components.firecrawl);
@@ -42,7 +48,7 @@ export const crawlSource = action({
   },
 });
 
-export const getSource = internalMutation({
+export const getSource = internalQuery({
   args: { sourceId: v.id("sources") },
   handler: (ctx, { sourceId }) => ctx.db.get(sourceId),
 });
@@ -70,7 +76,7 @@ export const onCrawlComplete = internalMutation({
   handler: async (ctx, args) => {
     if (args.status !== "completed") return;
 
-    const pages = await ctx.runQuery(components.firecrawl.lib.listPages, {
+    const pages = await firecrawl.listPages(ctx, {
       crawlId: args.crawlId,
       paginationOpts: { numItems: 100, cursor: null },
     });
