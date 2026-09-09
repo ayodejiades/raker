@@ -13,8 +13,8 @@ export const provisionInbox = mutation({
     const existing = await agentmail.listCachedInboxes(ctx);
     if (existing.length > 0) return existing[0];
     return await agentmail.createInbox(ctx, {
-      username: "settlement-hunter-claims",
-      displayName: "Settlement Hunter",
+      username: "raker-claims",
+      displayName: "Raker",
     });
   },
 });

@@ -12,7 +12,7 @@ export default function App() {
 
   return (
     <main style={{ maxWidth: 720, margin: "0 auto", padding: 24, fontFamily: "system-ui" }}>
-      <h1>Settlement Hunter</h1>
+      <h1>Raker</h1>
       <p>Live settlements discovered by Firecrawl. File a claim and watch the reply arrive.</p>
 
       {!inbox && (

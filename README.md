@@ -1,4 +1,4 @@
-# Settlement Hunter
+# Raker
 
 Finds class-action / consumer settlements you qualify for, files the claim by
 email, and tracks the administrator's reply live.
