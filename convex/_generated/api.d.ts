@@ -15,6 +15,7 @@ import type * as email from "../email.js";
 import type * as http from "../http.js";
 import type * as inbox from "../inbox.js";
 import type * as settlements from "../settlements.js";
+import type * as staticHosting from "../staticHosting.js";
 
 import type {
   ApiFromModules,
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   inbox: typeof inbox;
   settlements: typeof settlements;
+  staticHosting: typeof staticHosting;
 }>;
 
 /**

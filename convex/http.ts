@@ -1,5 +1,7 @@
 import { httpRouter } from "convex/server";
+import { registerStaticRoutes } from "@convex-dev/static-hosting";
 import { httpAction } from "./_generated/server";
+import { components } from "./_generated/api";
 import { agentmail } from "./email";
 
 const http = httpRouter();
@@ -21,5 +23,8 @@ http.route({
 
 // The Firecrawl component mounts its own /firecrawl/webhook route itself
 // (see convex.config.ts httpPrefix) — nothing to add here for that.
+
+// Serve the Vite build at the root (SPA fallback to index.html).
+registerStaticRoutes(http, components.selfHosting);
 
 export default http;
