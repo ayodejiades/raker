@@ -30,10 +30,14 @@ export const crawlSource = action({
             {
               type: "json",
               prompt:
-                "Extract each open settlement/claim listing on this page: title, " +
-                "provider/company name, category, one-sentence eligibility summary, " +
-                "claim deadline (if stated), and the settlement administrator's " +
-                "contact email (if listed).",
+                "Extract each open settlement/claim listing on this page as JSON " +
+                "in exactly this shape: " +
+                '{"settlements": [{"title": string, "provider": string (company ' +
+                "or defendant name), " +
+                '"category": string, "eligibilitySummary": string (one sentence), ' +
+                '"claimDeadline": string or omit, "contactEmail": string or omit}]}. ' +
+                "Omit claimDeadline/contactEmail when the page does not state them " +
+                "— never write TBD, N/A, or placeholder text.",
             },
           ],
           onlyMainContent: true,
@@ -82,19 +86,56 @@ export const onCrawlComplete = internalMutation({
     });
 
     for (const page of pages.page) {
-      const extracted = page.json as
-        | { listings?: Array<Record<string, string>> }
-        | undefined;
-      for (const listing of extracted?.listings ?? []) {
-        if (!listing.title || !listing.provider) continue;
+      // Firecrawl's JSON format lets the model choose the top-level key, so
+      // accept `settlements` or `listings`, a bare array, or a single object.
+      // Field names vary too (provider vs providerName, etc.).
+      const raw = page.json as unknown;
+      const candidates =
+        Array.isArray(raw)
+          ? raw
+          : (((raw as Record<string, unknown> | undefined)?.settlements ??
+              (raw as Record<string, unknown> | undefined)?.listings ??
+              []) as Array<Record<string, unknown>>);
+      const listings = Array.isArray(candidates) ? candidates : [candidates];
+      for (const listing of listings) {
+        if (typeof listing !== "object" || listing === null) continue;
+        const title =
+          (listing.title as string | undefined) ??
+          (listing.name as string | undefined);
+        const provider =
+          (listing.provider as string | undefined) ??
+          (listing.providerName as string | undefined) ??
+          (listing.company as string | undefined);
+        if (!title || !provider) continue;
+        const existing = await ctx.db
+          .query("settlements")
+          .withIndex("by_title", (q) => q.eq("title", title))
+          .first();
+        if (existing) continue;
+        // The model uses "TBD"/"N/A"-style placeholders when the page doesn't
+        // state a value — store those as missing, not as literal strings.
+        const clean = (v: unknown): string | undefined => {
+          if (typeof v !== "string") return undefined;
+          const t = v.trim();
+          return t === "" ||
+            /^(tbd|t\.b\.d\.|n\/a|unknown|none|not\s+(listed|stated|provided))$/i.test(
+              t,
+            )
+            ? undefined
+            : t;
+        };
         await ctx.db.insert("settlements", {
-          title: listing.title,
-          provider: listing.provider,
-          category: listing.category ?? "uncategorized",
+          title,
+          provider,
+          category:
+            (listing.category as string | undefined) ?? "uncategorized",
           url: page.url,
-          eligibilitySummary: listing.eligibilitySummary ?? "",
-          claimDeadline: listing.claimDeadline,
-          contactEmail: listing.contactEmail,
+          eligibilitySummary:
+            (listing.eligibilitySummary as string | undefined) ??
+            (listing.eligibility as string | undefined) ??
+            "",
+          claimDeadline: clean(listing.claimDeadline),
+          contactEmail: clean(listing.contactEmail),
           sourceUrl: page.url,
           discoveredAt: Date.now(),
         });

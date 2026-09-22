@@ -21,7 +21,9 @@ export default defineSchema({
     contactEmail: v.optional(v.string()), // settlement administrator's intake address
     sourceUrl: v.string(), // page this was crawled from
     discoveredAt: v.number(),
-  }).index("by_provider", ["provider"]),
+  })
+    .index("by_provider", ["provider"])
+    .index("by_title", ["title"]),
 
   // A user's decision to pursue a settlement, and the email thread that tracks it.
   claims: defineTable({

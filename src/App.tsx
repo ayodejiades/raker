@@ -18,7 +18,7 @@ export default function App() {
       {!inbox && (
         <button onClick={() => provisionInbox({})}>Provision claims inbox</button>
       )}
-      {inbox && <p>Sending from: {inbox.inboxId ?? inbox._id}</p>}
+      {inbox && <p>Sending from: {inbox.email} ({inbox.inboxId})</p>}
 
       <input
         placeholder="your email for updates"
@@ -32,7 +32,7 @@ export default function App() {
           <SettlementRow
             key={s._id}
             settlement={s}
-            inboxId={inbox?.inboxId ?? inbox?._id}
+            inboxId={inbox?.inboxId}
             userEmail={userEmail}
             onFile={(settlementId, inboxId) =>
               fileClaim({ settlementId, userEmail, inboxId })
