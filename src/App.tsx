@@ -28,6 +28,8 @@ export default function App() {
       />
 
       <ul style={{ listStyle: "none", padding: 0 }}>
+        {settlements === undefined && <li>Loading settlements…</li>}
+        {settlements?.length === 0 && <li>No settlements found yet — run a crawl.</li>}
         {(settlements ?? []).map((s: Doc<"settlements">) => (
           <SettlementRow
             key={s._id}
