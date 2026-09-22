@@ -1,0 +1,43 @@
+{
+  "recordedAt": "2026-09-22T18:58:15.353+00:00",
+  "baseUrl": "https://vivid-toad-855.convex.site",
+  "demoMode": false,
+  "durationSeconds": 32.8,
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "steps": [
+    {
+      "index": 0,
+      "atSeconds": 0,
+      "say": "Raker finds class-action settlements you qualify for, files the claim by email, and tracks the reply live."
+    },
+    {
+      "index": 1,
+      "atSeconds": 9.528,
+      "say": "This is the live dashboard, backed by Convex with settlements discovered by a Firecrawl crawl."
+    },
+    {
+      "index": 2,
+      "atSeconds": 12.109,
+      "say": "Provisioning Raker's dedicated AgentMail claims inbox."
+    },
+    {
+      "index": 3,
+      "atSeconds": 16.749,
+      "say": "Each row is a real open settlement. One click files the claim, and the administrator's reply flips its status live. No polling, no forms."
+    }
+  ],
+  "clicks": [
+    {
+      "atSeconds": 12.152,
+      "to": [
+        0.35100911458333334,
+        0.1457175925925926
+      ],
+      "selector": "text=\"Provision claims inbox\"",
+      "say": "Provisioning Raker's dedicated AgentMail claims inbox."
+    }
+  ]
+}
