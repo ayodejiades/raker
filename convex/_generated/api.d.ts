@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as _scratchCheckInbox from "../_scratchCheckInbox.js";
 import type * as claims from "../claims.js";
 import type * as crawl from "../crawl.js";
 import type * as email from "../email.js";
@@ -22,6 +23,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  _scratchCheckInbox: typeof _scratchCheckInbox;
   claims: typeof claims;
   crawl: typeof crawl;
   email: typeof email;
