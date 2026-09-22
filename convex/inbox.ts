@@ -61,7 +61,14 @@ export const provisionInbox = action({
 export const currentInbox = query({
   args: {},
   handler: async (): Promise<{ inboxId: string; email: string } | null> => {
-    const existing = await listRemote();
-    return existing.length > 0 ? normalize(existing[0]) : null;
+    // Never throw: a failed lookup must not blank the whole dashboard
+    // (useQuery has no error state here). Provision button covers null.
+    try {
+      const existing = await listRemote();
+      return existing.length > 0 ? normalize(existing[0]) : null;
+    } catch (e) {
+      console.error("currentInbox lookup failed:", e);
+      return null;
+    }
   },
 });
